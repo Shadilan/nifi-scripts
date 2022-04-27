@@ -1,4 +1,5 @@
 /* Thanks to  Nikolay Akimov https://github.com/vomikan
+based on https://github.com/albfernandez/javadbf#reading-a-dbf-file
 Added MAX_LINES - Max lines in one OutFile
 */
 import org.apache.nifi.flowfile.FlowFile
