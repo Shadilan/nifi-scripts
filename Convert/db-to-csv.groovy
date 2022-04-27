@@ -1,5 +1,4 @@
-/* Thanks to  Nikolay Akimov 
-https://github.com/vomikan
+/* Thanks to  Nikolay Akimov https://github.com/vomikan
 Added MAX_LINES - Max lines in one OutFile
 */
 import org.apache.nifi.flowfile.FlowFile
