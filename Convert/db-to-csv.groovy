@@ -1,3 +1,6 @@
+/* Thanks to Nikolay Akimenko for base script
+Added MAX_LINES - Max lines in one OutFile
+*/
 import org.apache.nifi.flowfile.FlowFile
 import org.apache.nifi.processor.ProcessSession
 import org.apache.nifi.processor.io.InputStreamCallback
