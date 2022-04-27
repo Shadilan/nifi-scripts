@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<template encoding-version="1.3">
+    <description></description>
+    <groupId>4e8fffb1-017d-1000-ffff-ffff9e368431</groupId>
+    <name>compare2json</name>
+    <snippet>
+        <connections>
+            <id>1ec343dc-1b1a-3bd5-0000-000000000000</id>
+            <parentGroupId>39ba4ba9-6f3f-3f7d-0000-000000000000</parentGroupId>
+            <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+            <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+            <destination>
+                <groupId>39ba4ba9-6f3f-3f7d-0000-000000000000</groupId>
+                <id>941c2bd8-d360-329b-0000-000000000000</id>
+                <type>FUNNEL</type>
+            </destination>
+            <flowFileExpiration>0 sec</flowFileExpiration>
+            <labelIndex>1</labelIndex>
+            <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
+            <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+            <name></name>
+            <selectedRelationships>unmatched</selectedRelationships>
+            <source>
+                <groupId>39ba4ba9-6f3f-3f7d-0000-000000000000</groupId>
+                <id>51f21d95-691c-33a5-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </source>
+            <zIndex>0</zIndex>
+        </connections>
+        <connections>
+            <id>5a2f9c23-f797-3f5d-0000-000000000000</id>
+            <parentGroupId>39ba4ba9-6f3f-3f7d-0000-000000000000</parentGroupId>
+            <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+            <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+            <bends>
+                <x>488.0</x>
+                <y>272.0</y>
+            </bends>
+            <destination>
+                <groupId>39ba4ba9-6f3f-3f7d-0000-000000000000</groupId>
+                <id>51f21d95-691c-33a5-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </destination>
+            <flowFileExpiration>0 sec</flowFileExpiration>
+            <labelIndex>0</labelIndex>
+            <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
+            <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+            <name></name>
+            <selectedRelationships>success</selectedRelationships>
+            <source>
+                <groupId>39ba4ba9-6f3f-3f7d-0000-000000000000</groupId>
+                <id>eb7545f9-c7f5-33a5-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </source>
+            <zIndex>0</zIndex>
+        </connections>
+        <connections>
+            <id>79d12488-59b0-32ce-0000-000000000000</id>
+            <parentGroupId>39ba4ba9-6f3f-3f7d-0000-000000000000</parentGroupId>
+            <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+            <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+            <destination>
+                <groupId>39ba4ba9-6f3f-3f7d-0000-000000000000</groupId>
+                <id>ba2cd416-34a6-37fd-0000-000000000000</id>
+                <type>FUNNEL</type>
+            </destination>
+            <flowFileExpiration>0 sec</flowFileExpiration>
+            <labelIndex>1</labelIndex>
+            <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
+            <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+            <name></name>
+            <selectedRelationships>одинаковый</selectedRelationships>
+            <source>
+                <groupId>39ba4ba9-6f3f-3f7d-0000-000000000000</groupId>
+                <id>51f21d95-691c-33a5-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </source>
+            <zIndex>0</zIndex>
+        </connections>
+        <connections>
+            <id>81045c74-5c3f-3390-0000-000000000000</id>
+            <parentGroupId>39ba4ba9-6f3f-3f7d-0000-000000000000</parentGroupId>
+            <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+            <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+            <bends>
+                <x>488.0</x>
+                <y>128.0</y>
+            </bends>
+            <destination>
+                <groupId>39ba4ba9-6f3f-3f7d-0000-000000000000</groupId>
+                <id>eb7545f9-c7f5-33a5-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </destination>
+            <flowFileExpiration>0 sec</flowFileExpiration>
+            <labelIndex>0</labelIndex>
+            <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
+            <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+            <name></name>
+            <selectedRelationships>success</selectedRelationships>
+            <source>
+                <groupId>39ba4ba9-6f3f-3f7d-0000-000000000000</groupId>
+                <id>65499622-b75a-3d44-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </source>
+            <zIndex>0</zIndex>
+        </connections>
+        <funnels>
+            <id>941c2bd8-d360-329b-0000-000000000000</id>
+            <parentGroupId>39ba4ba9-6f3f-3f7d-0000-000000000000</parentGroupId>
+            <position>
+                <x>8.0</x>
+                <y>512.0</y>
+            </position>
+        </funnels>
+        <funnels>
+            <id>ba2cd416-34a6-37fd-0000-000000000000</id>
+            <parentGroupId>39ba4ba9-6f3f-3f7d-0000-000000000000</parentGroupId>
+            <position>
+                <x>416.0</x>
+                <y>504.0</y>
+            </position>
+        </funnels>
+        <processors>
+            <id>51f21d95-691c-33a5-0000-000000000000</id>
+            <parentGroupId>39ba4ba9-6f3f-3f7d-0000-000000000000</parentGroupId>
+            <position>
+                <x>0.0</x>
+                <y>280.0</y>
+            </position>
+            <bundle>
+                <artifact>nifi-standard-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.13.2</version>
+            </bundle>
+            <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                    <entry>
+                        <key>Routing Strategy</key>
+                        <value>
+                            <name>Routing Strategy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>одинаковый</key>
+                        <value>
+                            <name>одинаковый</name>
+                        </value>
+                    </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                    <entry>
+                        <key>Routing Strategy</key>
+                        <value>Route to Property name</value>
+                    </entry>
+                    <entry>
+                        <key>одинаковый</key>
+                        <value>${script.output:equals("true")}</value>
+                    </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+            </config>
+            <executionNodeRestricted>false</executionNodeRestricted>
+            <name>RouteOnAttribute</name>
+            <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>unmatched</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>одинаковый</name>
+            </relationships>
+            <state>RUNNING</state>
+            <style/>
+            <type>org.apache.nifi.processors.standard.RouteOnAttribute</type>
+        </processors>
+        <processors>
+            <id>65499622-b75a-3d44-0000-000000000000</id>
+            <parentGroupId>39ba4ba9-6f3f-3f7d-0000-000000000000</parentGroupId>
+            <position>
+                <x>0.0</x>
+                <y>0.0</y>
+            </position>
+            <bundle>
+                <artifact>nifi-standard-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.13.2</version>
+            </bundle>
+            <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                    <entry>
+                        <key>File Size</key>
+                        <value>
+                            <name>File Size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Batch Size</key>
+                        <value>
+                            <name>Batch Size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Data Format</key>
+                        <value>
+                            <name>Data Format</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Unique FlowFiles</key>
+                        <value>
+                            <name>Unique FlowFiles</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>generate-ff-custom-text</key>
+                        <value>
+                            <name>generate-ff-custom-text</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>character-set</key>
+                        <value>
+                            <name>character-set</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>mime-type</key>
+                        <value>
+                            <name>mime-type</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>script.etalon_json</key>
+                        <value>
+                            <name>script.etalon_json</name>
+                        </value>
+                    </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                    <entry>
+                        <key>File Size</key>
+                        <value>0B</value>
+                    </entry>
+                    <entry>
+                        <key>Batch Size</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>Data Format</key>
+                        <value>Text</value>
+                    </entry>
+                    <entry>
+                        <key>Unique FlowFiles</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>generate-ff-custom-text</key>
+                        <value>{
+  "test2": "2",
+  "test1": "${random():mod(2):plus(1)}"
+}</value>
+                    </entry>
+                    <entry>
+                        <key>character-set</key>
+                        <value>UTF-8</value>
+                    </entry>
+                    <entry>
+                        <key>mime-type</key>
+                        <value>application/json</value>
+                    </entry>
+                    <entry>
+                        <key>script.etalon_json</key>
+                        <value>{"test2": "2","test1": "1"}</value>
+                    </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>5s</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+            </config>
+            <executionNodeRestricted>false</executionNodeRestricted>
+            <name>GenerateFlowFile</name>
+            <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+            </relationships>
+            <state>RUNNING</state>
+            <style/>
+            <type>org.apache.nifi.processors.standard.GenerateFlowFile</type>
+        </processors>
+        <processors>
+            <id>eb7545f9-c7f5-33a5-0000-000000000000</id>
+            <parentGroupId>39ba4ba9-6f3f-3f7d-0000-000000000000</parentGroupId>
+            <position>
+                <x>0.0</x>
+                <y>144.0</y>
+            </position>
+            <bundle>
+                <artifact>nifi-groovyx-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.13.2</version>
+            </bundle>
+            <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                    <entry>
+                        <key>groovyx-script-file</key>
+                        <value>
+                            <name>groovyx-script-file</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>groovyx-script-body</key>
+                        <value>
+                            <name>groovyx-script-body</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>groovyx-failure-strategy</key>
+                        <value>
+                            <name>groovyx-failure-strategy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>groovyx-additional-classpath</key>
+                        <value>
+                            <name>groovyx-additional-classpath</name>
+                        </value>
+                    </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                    <entry>
+                        <key>groovyx-script-file</key>
+                    </entry>
+                    <entry>
+                        <key>groovyx-script-body</key>
+                        <value>import groovy.json.JsonSlurper
+
+def flowFile = session.get()
+if(!flowFile) return
+
+try {
+    def map1 = flowFile.read().withReader("UTF-8"){ new JsonSlurper().parse(it) }
+ 
+    def jsonSlurper = new JsonSlurper()
+    def second_json = flowFile.getAttribute("script.etalon_json")
+    def map2 = jsonSlurper.parseText(second_json)
+    Boolean result = (map1 == map2)
+
+    flowFile = session.putAttribute(flowFile, "script.output", result.toString())
+
+    //Clearing an attribute that is not needed
+    flowFile = session.putAttribute(flowFile, "script.etalon_json", "")
+
+    //transfer control to success 
+    session.transfer(flowFile, REL_SUCCESS)
+} catch (ex) {
+    flowFile = session.putAttribute(flowFile, "script.error_message", ex.getMessage())
+    flowFile = session.putAttribute(flowFile, "script.error", ex.toString())
+    //transfer control to failure
+    session.transfer(flowFile, REL_FAILURE)
+}
+</value>
+                    </entry>
+                    <entry>
+                        <key>groovyx-failure-strategy</key>
+                        <value>rollback</value>
+                    </entry>
+                    <entry>
+                        <key>groovyx-additional-classpath</key>
+                    </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+            </config>
+            <executionNodeRestricted>false</executionNodeRestricted>
+            <name>Diff</name>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>failure</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+            </relationships>
+            <state>RUNNING</state>
+            <style/>
+            <type>org.apache.nifi.processors.groovyx.ExecuteGroovyScript</type>
+        </processors>
+    </snippet>
+    <timestamp>04/27/2022 16:34:05 MSK</timestamp>
+</template>
