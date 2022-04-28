@@ -10,7 +10,7 @@
             <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
             <backPressureObjectThreshold>10000</backPressureObjectThreshold>
             <bends>
-                <x>496.0</x>
+                <x>488.0</x>
                 <y>280.0</y>
             </bends>
             <destination>
@@ -34,13 +34,13 @@
             <zIndex>0</zIndex>
         </connections>
         <connections>
-            <id>747bbfe7-e613-38ad-0000-000000000000</id>
+            <id>73c797d7-5e60-34c4-0000-000000000000</id>
             <parentGroupId>8dc38182-c9a9-3f83-0000-000000000000</parentGroupId>
             <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
             <backPressureObjectThreshold>10000</backPressureObjectThreshold>
             <bends>
-                <x>504.0</x>
-                <y>136.0</y>
+                <x>488.0</x>
+                <y>128.0</y>
             </bends>
             <destination>
                 <groupId>8dc38182-c9a9-3f83-0000-000000000000</groupId>
@@ -57,7 +57,7 @@
             <selectedRelationships>success</selectedRelationships>
             <source>
                 <groupId>8dc38182-c9a9-3f83-0000-000000000000</groupId>
-                <id>a98b64c8-6962-395f-0000-000000000000</id>
+                <id>cab471e5-2cac-3647-0000-000000000000</id>
                 <type>PROCESSOR</type>
             </source>
             <zIndex>0</zIndex>
@@ -152,7 +152,165 @@
             <type>org.apache.nifi.processors.standard.Base64EncodeContent</type>
         </processors>
         <processors>
-            <id>a98b64c8-6962-395f-0000-000000000000</id>
+            <id>ad814c1a-ee01-3ff3-0000-000000000000</id>
+            <parentGroupId>8dc38182-c9a9-3f83-0000-000000000000</parentGroupId>
+            <position>
+                <x>0.0</x>
+                <y>288.0</y>
+            </position>
+            <bundle>
+                <artifact>nifi-groovyx-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.13.2</version>
+            </bundle>
+            <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                    <entry>
+                        <key>groovyx-script-file</key>
+                        <value>
+                            <name>groovyx-script-file</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>groovyx-script-body</key>
+                        <value>
+                            <name>groovyx-script-body</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>groovyx-failure-strategy</key>
+                        <value>
+                            <name>groovyx-failure-strategy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>groovyx-additional-classpath</key>
+                        <value>
+                            <name>groovyx-additional-classpath</name>
+                        </value>
+                    </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                    <entry>
+                        <key>groovyx-script-file</key>
+                    </entry>
+                    <entry>
+                        <key>groovyx-script-body</key>
+                        <value>/* Thanks to  Nikolay Akimov https://github.com/vomikan
+based on https://github.com/albfernandez/javadbf#reading-a-dbf-file
+Added MAX_LINES - Max lines in one OutFile
+*/
+import org.apache.nifi.flowfile.FlowFile
+import org.apache.nifi.processor.ProcessSession
+import org.apache.nifi.processor.io.InputStreamCallback
+
+import com.linuxense.javadbf.*
+
+SEP = ","
+MAX_LINES = 10000
+
+def escapeCSV(String s) {
+    str1 = new String(s.getBytes("ISO-8859-1"), "UTF-8")
+    str2 = new String(s.getBytes("ISO-8859-1"), "windows-1251")
+    if (str1.length() &lt; str2.length()) { s = str1 } else { s = str2 }
+    if (s.contains(SEP)) { 
+      s = /"/ + s.replaceAll(/"/, /""/) + /"/
+    } 
+    return s
+}
+
+ProcessSession session=session
+def flowFile = session.get()
+if(!flowFile) return
+List&lt;FlowFile&gt; files=[]
+FlowFile currentFile
+OutputStream outputStream
+try {
+    int current = 0
+    session.read(flowFile, { inputStream -&gt;
+        reader = new DBFReader(inputStream)
+
+        int numberOfFields = reader.getFieldCount()
+        fields = new String[numberOfFields]
+        String header = ''
+        for (int i = 0; i &lt; numberOfFields; i++) {
+            fields[i] = reader.getField(i).getName()
+            header += escapeCSV(fields[i])
+            if (i &lt; numberOfFields - 1) { header += SEP }
+        }
+
+        DBFRow row
+        while ((row = reader.nextRow()) != null) {
+            if (current == 0) {
+                files.add(session.create(flowFile))
+                currentFile = files.get(files.size() - 1)
+                outputStream = session.write(currentFile)
+                outputStream.write("${header.toString()}".getBytes('UTF-8'))
+            }
+            String csv = '\n'
+            for (int i = 0; i &lt; numberOfFields; i++) {
+                csv += escapeCSV(row.getString(fields[i]))
+                if (i &lt; numberOfFields - 1) { csv += SEP }
+            }
+            outputStream.write("${csv.toString()}".getBytes('UTF-8'))
+            current++
+            if (current &gt;= MAX_LINES) {
+                current = 0
+                outputStream.close()
+            }
+        }
+    } as InputStreamCallback)
+
+    //transfer control to success
+    if (outputStream != null){ outputStream.close() }
+
+    session.transfer(files, REL_SUCCESS)
+    session.remove(flowFile)
+} catch (ex) {
+    flowFile = session.putAttribute(flowFile, "script.error_message", ex.getMessage())
+    flowFile = session.putAttribute(flowFile, "script.error", ex.toString())
+    //transfer control to failure
+    session.transfer(flowFile, REL_FAILURE)
+    if (outputStream!=null){outputStream.close()}
+    session.remove(files)
+}</value>
+                    </entry>
+                    <entry>
+                        <key>groovyx-failure-strategy</key>
+                        <value>rollback</value>
+                    </entry>
+                    <entry>
+                        <key>groovyx-additional-classpath</key>
+                        <value>/opt/nifi/lib/dbf/javadbf-1.13.2.jar</value>
+                    </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+            </config>
+            <executionNodeRestricted>false</executionNodeRestricted>
+            <name>ExecuteGroovyScript</name>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>failure</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+            </relationships>
+            <state>RUNNING</state>
+            <style/>
+            <type>org.apache.nifi.processors.groovyx.ExecuteGroovyScript</type>
+        </processors>
+        <processors>
+            <id>cab471e5-2cac-3647-0000-000000000000</id>
             <parentGroupId>8dc38182-c9a9-3f83-0000-000000000000</parentGroupId>
             <position>
                 <x>0.0</x>
@@ -233,7 +391,7 @@
                     </entry>
                     <entry>
                         <key>generate-ff-custom-text</key>
-                        <value>A2kGDwMAAADBAVkC4wTjBAAAAAAAAAAAAAAAAAAAAADHwMPOy87CzsoxAEMAAAAAKAAAAAAAAAAAAAAAAAAAAMfAw87LzsLOyjIAQwAAAAAoAAAAAAAAAAAAAAAAAAAA1MDMyMvI3wAAAABDAAAAADwAAAAAAAAAAAAAAAAAAADKzszPwM3I3wAAAEMAAAAAPAAAAAAAAAAAAAAAAAAAAMjM3wAAAAAAAAAAQwAAAAAeAAAAAAAAAAAAAAAAAAAA08vI1sAAAAAAAABDAAAAADwAAAAAAAAAAAAAAAAAAADIzcTFytEAAAAAAEMAAAAACgAAAAAAAAAAAAAAAAAAAMPO0M7EAAAAAAAAQwAAAAAoAAAAAAAAAAAAAAAAAAAA0sXLxdTOzQAAAABDAAAAACgAAAAAAAAAAAAAAAAAAADUwMrRAAAAAAAAAEMAAAAAKAAAAAAAAAAAAAAAAAAAAM/QyMzF18DNMQAAQwAAAAA8AAAAAAAAAAAAAAAAAAAAz9DIzMXXwM0yAABDAAAAADwAAAAAAAAAAAAAAAAAAADP0MjMxdfAzTMAAEMAAAAAPAAAAAAAAAAAAAAAAAAAAA0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIMTu8O7j7ukgz+Xy8CDR5fDj5eXi6PcsICAgICAgICAgICAgICAgICDD8O7s7uIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDP5fLwINHl8OPl5eLo9yAgICAgICAgICAgICAgICDS4uXw8erg/yDkLjEyIOriLjUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAxODk2NTQgICAgzO7x6uLgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICgwOTUpIC0gOTg3NjU0MyAgICAgICAgICAgICAgICAgICAgICAgICAoMDk1KSAtIDk4NzY1NDIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDT4uDm4OXs++kgyOLg7SDC4PHo6/zl4uj3LCAgICAgICAgICAgICAgzODr/Pbl4iAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgwM7H0iAi0u7w4+7i7uUg7uHu8PPk7uLg7ejlIiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgyOLg7SDC4PHo6/zl4uj3ICAgICAgICAgICAgICAg0u7h7uv88erg/yDkLjgg6u7w7y4zIO706PEgNzcgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMTIzNjU3ICAgIMzu8eri4CAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAoMDk1KSAtIDg3NjU0MzIgICAgICAgICAgICAgICAgICAgICAgICAgKDA5NSkgLSA4NzY1NDMxICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAa</value>
+                        <value>A2kGDwMAAADBAVkC4wTjBAAAAAAAAAAAAAAAAAAAAADHwMPOy87CzsoxAEMAAAAAKAAAAAAAAAAAAAAAAAAAAMfAw87LzsLOyjIAQwAAAAAoAAAAAAAAAAAAAAAAAAAA1MDMyMvI3wAAAABDAAAAADwAAAAAAAAAAAAAAAAAAADKzszPwM3I3wAAAEMAAAAAPAAAAAAAAAAAAAAAAAAAAMjM3wAAAAAAAAAAQwAAAAAeAAAAAAAAAAAAAAAAAAAA08vI1sAAAAAAAABDAAAAADwAAAAAAAAAAAAAAAAAAADIzcTFytEAAAAAAEMAAAAACgAAAAAAAAAAAAAAAAAAAMPO0M7EAAAAAAAAQwAAAAAoAAAAAAAAAAAAAAAAAAAA0sXLxdTOzQAAAABDAAAAACgAAAAAAAAAAAAAAAAAAADUwMrRAAAAAAAAAEMAAAAAKAAAAAAAAAAAAAAAAAAAAM/QyMzF18DNMQAAQwAAAAA8AAAAAAAAAAAAAAAAAAAAz9DIzMXXwM0yAABDAAAAADwAAAAAAAAAAAAAAAAAAADP0MjMxdfAzTMAAEMAAAAAPAAAAAAAAAAAAAAAAAAAAA0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIMTu8O7j7ukgz+Xy8CDR5fDj5eXi6PcsICAgICAgICAgICAgICAgICDD8O7s7uIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDP5fLwINHl8OPl5eLo9yAgICAgICAgICAgICAgICDS4uXw8erg/yDkLjEyIOriLjUsIOvo8i4gIsAiICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAxODk2NTQgICAgzO7x6uLgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICgwOTUpIC0gOTg3NjU0MyAgICAgICAgICAgICAgICAgICAgICAgICAoMDk1KSAtIDk4NzY1NDIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDT4uDm4OXs++kgyOLg7SDC4PHo6/zl4uj3LCAgICAgICAgICAgICAgzODr/Pbl4iAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgwM7H0iAi0u7w4+7i7uUg7uHu8PPk7uLg7ejlIiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgyOLg7SDC4PHo6/zl4uj3ICAgICAgICAgICAgICAg0u7h7uv88erg/yDkLjgg6u7w7y4zIO706PEgNzcgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMTIzNjU3ICAgIMzu8eri4CAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAoMDk1KSAtIDg3NjU0MzIgICAgICAgICAgICAgICAgICAgICAgICAgKDA5NSkgLSA4NzY1NDMxICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAa</value>
                     </entry>
                     <entry>
                         <key>character-set</key>
@@ -258,169 +416,6 @@
             <style/>
             <type>org.apache.nifi.processors.standard.GenerateFlowFile</type>
         </processors>
-        <processors>
-            <id>ad814c1a-ee01-3ff3-0000-000000000000</id>
-            <parentGroupId>8dc38182-c9a9-3f83-0000-000000000000</parentGroupId>
-            <position>
-                <x>0.0</x>
-                <y>288.0</y>
-            </position>
-            <bundle>
-                <artifact>nifi-groovyx-nar</artifact>
-                <group>org.apache.nifi</group>
-                <version>1.13.2</version>
-            </bundle>
-            <config>
-                <bulletinLevel>WARN</bulletinLevel>
-                <comments></comments>
-                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
-                <descriptors>
-                    <entry>
-                        <key>groovyx-script-file</key>
-                        <value>
-                            <name>groovyx-script-file</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>groovyx-script-body</key>
-                        <value>
-                            <name>groovyx-script-body</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>groovyx-failure-strategy</key>
-                        <value>
-                            <name>groovyx-failure-strategy</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>groovyx-additional-classpath</key>
-                        <value>
-                            <name>groovyx-additional-classpath</name>
-                        </value>
-                    </entry>
-                </descriptors>
-                <executionNode>ALL</executionNode>
-                <lossTolerant>false</lossTolerant>
-                <penaltyDuration>30 sec</penaltyDuration>
-                <properties>
-                    <entry>
-                        <key>groovyx-script-file</key>
-                    </entry>
-                    <entry>
-                        <key>groovyx-script-body</key>
-                        <value>/* Thanks to  Nikolay Akimov https://github.com/vomikan
-based on https://github.com/albfernandez/javadbf#reading-a-dbf-file
-Added MAX_LINES - Max lines in one OutFile
-*/
-import org.apache.nifi.flowfile.FlowFile
-import org.apache.nifi.processor.ProcessSession
-import org.apache.nifi.processor.io.InputStreamCallback
-
-import com.linuxense.javadbf.*
-
-static def _(String s) {
-    def str1 = __(s)
-    def str2 = new String(s.getBytes("ISO-8859-1"), "windows-1251")
-    if (str1.length() &lt; str2.length()) { return str1} else { return str2 }
-}
-
-static def __(String s) {
-    return new String(s.getBytes("ISO-8859-1"), "UTF-8")
-}
-def MAX_LINES=10000
-ProcessSession session=session
-def flowFile = session.get()
-if(!flowFile) return
-List&lt;FlowFile&gt; files=[]
-FlowFile currentFile
-OutputStream outputStream
-try {
-    int current=0
-    session.read(flowFile, { inputStream -&gt;
-        reader = new DBFReader(inputStream)
-        //def charset = reader.getCharset()
-
-        int numberOfFields = reader.getFieldCount()
-        def fields = new String[numberOfFields]
-        String header = ''
-        for (int i = 0; i &lt; numberOfFields; i++) {
-            fields[i] = reader.getField(i).getName()
-            header += _(fields[i])
-            if (i &lt; numberOfFields - 1) {header += ','}
-        }
-
-        DBFRow row
-
-        files.add(session.create(flowFile))
-        currentFile=files.get(files.size()-1)
-        outputStream=session.write(currentFile)
-        outputStream.write("${header.toString()}".getBytes('UTF-8'))
-        while ((row = reader.nextRow()) != null) {
-            String csv = '\n'
-            for (int i = 0; i &lt; numberOfFields; i++) {
-                csv += _(row.getString(fields[i]))
-                if (i &lt; numberOfFields - 1) {csv += ','}
-            }
-            outputStream.write("${csv.toString()}".getBytes('UTF-8'))
-            current++
-            if (current&gt;MAX_LINES){
-                current=0
-                outputStream.close()
-                files.add(session.create(flowFile))
-                currentFile=files.get(files.size()-1)
-                outputStream=session.write(currentFile)
-                outputStream.write("${header.toString()}".getBytes('UTF-8'))
-            }
-        }
-    } as InputStreamCallback)
-
-    //transfer control to success
-    if (outputStream!=null){outputStream.close()}
-    if (current==0){
-        //Удаляем пустой флоуфайл
-        files.remove(files.size()-1)
-    }
-
-    session.transfer(files, REL_SUCCESS)
-    session.remove(flowFile)
-} catch (ex) {
-    flowFile = session.putAttribute(flowFile, "script_error_message", ex.getMessage())
-    flowFile = session.putAttribute(flowFile, "script_error", ex.toString())
-    //transfer control to failure
-    session.transfer(flowFile, REL_FAILURE)
-    if (outputStream!=null){outputStream.close()}
-    session.remove(files)
-}</value>
-                    </entry>
-                    <entry>
-                        <key>groovyx-failure-strategy</key>
-                        <value>rollback</value>
-                    </entry>
-                    <entry>
-                        <key>groovyx-additional-classpath</key>
-                        <value>/opt/nifi/lib/dbf/javadbf-1.13.2.jar</value>
-                    </entry>
-                </properties>
-                <runDurationMillis>0</runDurationMillis>
-                <schedulingPeriod>0 sec</schedulingPeriod>
-                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
-                <yieldDuration>1 sec</yieldDuration>
-            </config>
-            <executionNodeRestricted>false</executionNodeRestricted>
-            <name>ExecuteGroovyScript</name>
-            <relationships>
-                <autoTerminate>true</autoTerminate>
-                <name>failure</name>
-            </relationships>
-            <relationships>
-                <autoTerminate>false</autoTerminate>
-                <name>success</name>
-            </relationships>
-            <state>RUNNING</state>
-            <style/>
-            <type>org.apache.nifi.processors.groovyx.ExecuteGroovyScript</type>
-        </processors>
     </snippet>
-    <timestamp>04/27/2022 12:50:40 MSK</timestamp>
+    <timestamp>04/28/2022 01:06:18 MSK</timestamp>
 </template>
