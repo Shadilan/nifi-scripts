@@ -14,3 +14,10 @@
 ```
 
 Скрипт адаптирован для работы со старыми файлами Excel 95.
+
+Настройки процессора ExecuteGroovyScript 1.13.2
+```
+/opt/nifi/lib/poi/poi-5.0.0.jar; /opt/nifi/lib/poi/commons-math3-3.6.1.jar
+```
+
+![image](https://user-images.githubusercontent.com/6836805/177602470-8231e833-6a24-4e1d-a4e2-7f7772ebffe6.png)
