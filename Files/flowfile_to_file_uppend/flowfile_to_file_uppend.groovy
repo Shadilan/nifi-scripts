@@ -1,5 +1,3 @@
-﻿import groovy.json.*
-
 def flowFile = session.get()
 if(!flowFile) return
 
