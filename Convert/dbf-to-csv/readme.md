@@ -12,4 +12,4 @@ Base64EncodeContent процессор преобразует его обрат�
  
  | Property | Value |
 |----------|-------|
-|    Additional classpath      |   /opt/nifi/lib/dbf/javadbf-1.13.2.jar    |
+|    Additional classpath      |   ./lib/dbf/javadbf-1.13.2.jar    |
