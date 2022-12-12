@@ -6,7 +6,7 @@ import groovy.json.*
 
 def srcflowFile = session.get();
 if (srcflowFile == null) {
-  //Exit on zero files
+    //Exit on zero files
     return;
 }
 
@@ -21,7 +21,7 @@ Map<String, OutputStream> resultOut = new HashMap<>()
 / resultF = FlowFiles we already created
 / flowFile = base flow file
 / session = session to operate flowfile
-*/ 
+*/
 def writeTable(String prefix, String name, Map m, Map result, Map resultF, FlowFile flowFile, ProcessSession session) {
     def table_name = String.format("%s_%s", prefix, name)
     if (!(table_name in result)) {
@@ -66,6 +66,13 @@ def parseJSON(String main_id, String parent_id, String prefix, String name, Map 
         } else if (val instanceof String) {
             id = val.toString()
         }
+    } else if (js.get("id")){
+        def val = js.get("id")
+        if (val instanceof Map && val.size() == 1) {
+            id = val.get(val.keySet()[0])
+        } else if (val instanceof String) {
+            id = val.toString()
+        }
     }
     if (main_id.isBlank()) {
         main_id = id
@@ -75,15 +82,15 @@ def parseJSON(String main_id, String parent_id, String prefix, String name, Map 
     for (String key : js.keySet()) {
         def val = js.get(key)
         if (val instanceof Map) {
-          //Parse inner object
+            //Parse inner object
             if (val.size() == 1) {
-              //If inner object have only one field just flatten it to upper level
+                //If inner object have only one field just flatten it to upper level
                 m.put(translateName(key), val.get(val.keySet()[0]))
             } else
-                //Recurse call
+            //Recurse call
                 parseJSON(main_id, id, prefix, key, val, resultF, result, flowFile, session)
         } else if (val instanceof List) {
-          // Parse list object recursively
+            // Parse list object recursively
             parseJSONA(main_id, id, prefix, key, val, resultF, result, flowFile, session)
         } else {
             //Add to record plain fields
@@ -109,7 +116,7 @@ def parseJSONA(String main_id, String id, String prefix, String name, List js, M
         for (def item in js) {
             //Iterate objects in list
             if (item instanceof Map)
-                //Parse map recursively 
+            //Parse map recursively
                 parseJSON(main_id, id, prefix, name, item, resultF, result, flowFile, session)
             else if (item instanceof List) {
                 //Parse list recursively
@@ -137,7 +144,7 @@ session.read(srcflowFile,
         { it ->
             try {
                 def ir = new InputStreamReader(it, 'UTF-8')
-                def json = new JsonSlurper().parseText(unescape(ir.getText()))
+                def json = new JsonSlurper().parseText(ir.getText())
                 if (json instanceof Map) {
                     parseJSON("", "", prefix, table, json, resultFiles, resultOut, srcflowFile, session)
                 } else if (json instanceof List) {

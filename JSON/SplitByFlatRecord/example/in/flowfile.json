@@ -1,0 +1,1 @@
+{"id": "1", "type": "cost", "value": 1000, "lines": [{"id":1,"description": "field1","value": 100,"types": [{"name":"item"},{"name": "valuable"}]},{"id":2,"description": "field2","value": 900,"types": [{"name":"item"},{"name": "valuable"}]}],  "persons": [{"name": "Johnson","type": "seller"},{"name": "Simpson","type": "buyer"}]}
