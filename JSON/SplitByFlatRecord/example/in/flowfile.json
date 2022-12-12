@@ -1,0 +1,1 @@
+{"id": "1", "type": "cost", "value": 1000, "lines":[{"description": "field1","value": 100},{"description": "field2","value": 900}],  "persons": [{"name": "Johnson","type": "seller"},{"name": "Simpson","type": "buyer"}]}
