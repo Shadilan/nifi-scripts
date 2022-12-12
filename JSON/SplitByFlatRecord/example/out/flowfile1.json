@@ -1,2 +1,4 @@
-{"description":"field1","value":100}
-{"description":"field2","value":900}
+{"parent_id":"1","main_id":"1","name":"item"}
+{"parent_id":"1","main_id":"1","name":"valuable"}
+{"parent_id":"1","main_id":"1","name":"item"}
+{"parent_id":"1","main_id":"1","name":"valuable"}
