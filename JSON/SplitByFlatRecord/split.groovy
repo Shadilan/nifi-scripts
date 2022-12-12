@@ -66,6 +66,13 @@ def parseJSON(String main_id, String parent_id, String prefix, String name, Map 
         } else if (val instanceof String) {
             id = val.toString()
         }
+    } else if (js.get("id")){
+        def val = js.get("id")
+        if (val instanceof Map && val.size() == 1) {
+            id = val.get(val.keySet()[0])
+        } else if (val instanceof String) {
+            id = val.toString()
+        }
     }
     if (main_id.isBlank()) {
         main_id = id
