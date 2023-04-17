@@ -1,0 +1,33 @@
+[ {
+    "metadata" : {
+      "integrationTimestamp" : 1681505098676
+    },
+    "messageObject" : {
+      "id" : "key",
+      "createdOn" : "2023-03-29T16:32:44.8800000Z",
+      "modifiedOn" : "2023-03-29T16:32:44.8800000Z",
+      "currentAmount" : 1149.00,
+      "contact" : "key",
+      "type" : "main",
+      "dueDate" : "2024-04-13T21:00:00.0000000Z",
+      "regDate" : "2023-03-31T00:00:00.0000000Z",
+      "totalAmount" : 1149.00,
+      "bonusBalanceBPMID" : "key",
+      "bonusBalanceStateName" : "Updated",
+      "bonusBalanceState" : { },
+      "bonuses" : [ {
+        "typeSource" : "Sale",
+        "currentAmount" : 149.00,
+        "totalAmount" : 149.00,
+        "dueAmount" : 149.00,
+        "dueDate" : "2024-04-13T21:00:00.0000000Z"
+      }, {
+        "typeSource" : "Action",
+        "currentAmount" : 1000.00,
+        "totalAmount" : 1000.00,
+        "dueAmount" : 1000.00,
+        "dueDate" : "2023-05-05T16:19:54.1393545Z"
+      } ],
+      "contactBPMID" : "key"
+    }
+  } ]
