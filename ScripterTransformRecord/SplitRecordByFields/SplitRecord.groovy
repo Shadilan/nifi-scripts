@@ -1,7 +1,7 @@
 results = []
 
-fields = record.getRawFieldNames();
-schema = record.getSchema();
+fields = record.getRawFieldNames()
+schema = record.getSchema()
 fields.each{key -> {
     log.debug("Got key: ${key}")
     nMap = new java.util.HashMap<String, Object>()
